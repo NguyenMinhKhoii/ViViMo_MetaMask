@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViViMo - Ví Thanh Toán Vĩ Mô</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Page -->
+        <div id="login-page" class="page active">
+            <div class="auth-container">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <h1>ViViMo</h1>
+                    <p>Ví Thanh Toán Vĩ Mô</p>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="Nhập email của bạn" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Mật khẩu</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Nhập mật khẩu" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password')"></i>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="remember-me">
+                            <span class="checkmark"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Đăng Nhập
+                    </button>
+                </form>
+                <div class="divider">
+                    <span>hoặc</span>
+                </div>
+                <button id="metamask-login" class="btn btn-metamask">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+                    Kết nối với MetaMask
+                </button>
+                <p class="switch-auth">
+                    Chưa có tài khoản? <a href="#" onclick="showPage('register-page')">Đăng ký ngay</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="register-page" class="page">
+            <div class="auth-container">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <h1>ViViMo</h1>
+                    <p>Tạo Tài Khoản Mới</p>
+                </div>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Họ và tên</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="register-name" placeholder="Nhập họ và tên" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="register-email" placeholder="Nhập email của bạn" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-phone">Số điện thoại</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="register-phone" placeholder="Nhập số điện thoại" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Mật khẩu</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-password" placeholder="Tạo mật khẩu" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('register-password')"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm">Xác nhận mật khẩu</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-confirm" placeholder="Nhập lại mật khẩu" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('register-confirm')"></i>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="agree-terms" required>
+                            <span class="checkmark"></span>
+                            Tôi đồng ý với <a href="#">Điều khoản sử dụng</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Đăng Ký
+                    </button>
+                </form>
+                <div class="divider">
+                    <span>hoặc</span>
+                </div>
+                <button id="metamask-register" class="btn btn-metamask">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+                    Đăng ký với MetaMask
+                </button>
+                <p class="switch-auth">
+                    Đã có tài khoản? <a href="#" onclick="showPage('login-page')">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Wallet Page -->
+        <div id="wallet-page" class="page">
+            <header class="wallet-header">
+                <div class="header-left">
+                    <i class="fas fa-wallet"></i>
+                    <h2>ViViMo</h2>
+                </div>
+                <div class="header-right">
+                    <div class="network-status" id="network-status">
+                        <span class="status-dot"></span>
+                        <span id="network-name">Ethereum Mainnet</span>
+                    </div>
+                    <div class="user-menu" onclick="toggleUserMenu()">
+                        <i class="fas fa-user-circle"></i>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <a href="#" onclick="showSettings()"><i class="fas fa-cog"></i> Cài đặt</a>
+                            <a href="#" onclick="showProfile()"><i class="fas fa-user"></i> Hồ sơ</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="wallet-main">
+                <!-- Balance Card -->
+                <div class="balance-card">
+                    <div class="balance-info">
+                        <p class="balance-label">Số dư hiện tại</p>
+                        <h1 class="balance-amount" id="balance-amount">0.00 ETH</h1>
+                        <p class="balance-usd" id="balance-usd">≈ $0.00 USD</p>
+                    </div>
+                    <div class="wallet-address" id="wallet-address-container">
+                        <p>Địa chỉ ví</p>
+                        <div class="address-copy">
+                            <span id="wallet-address">Chưa kết nối</span>
+                            <button onclick="copyAddress()" title="Sao chép địa chỉ">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="showSendModal()">
+                        <div class="action-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <span>Gửi</span>
+                    </button>
+                    <button class="action-btn" onclick="showReceiveModal()">
+                        <div class="action-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <span>Nhận</span>
+                    </button>
+                    <button class="action-btn" onclick="showSwapModal()">
+                        <div class="action-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <span>Đổi</span>
+                    </button>
+                    <button class="action-btn" onclick="showBuyModal()">
+                        <div class="action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <span>Mua</span>
+                    </button>
+                </div>
+
+                <!-- Assets Section -->
+                <div class="assets-section">
+                    <div class="section-header">
+                        <h3>Tài sản của bạn</h3>
+                        <button class="btn-text" onclick="refreshAssets()">
+                            <i class="fas fa-sync-alt"></i> Làm mới
+                        </button>
+                    </div>
+                    <div class="assets-list" id="assets-list">
+                        <div class="asset-item">
+                            <div class="asset-icon">
+                                <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH">
+                            </div>
+                            <div class="asset-info">
+                                <h4>Ethereum</h4>
+                                <p>ETH</p>
+                            </div>
+                            <div class="asset-value">
+                                <h4 id="eth-balance">0.00 ETH</h4>
+                                <p id="eth-usd">$0.00</p>
+                            </div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-icon">
+                                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT">
+                            </div>
+                            <div class="asset-info">
+                                <h4>Tether</h4>
+                                <p>USDT</p>
+                            </div>
+                            <div class="asset-value">
+                                <h4>0.00 USDT</h4>
+                                <p>$0.00</p>
+                            </div>
+                        </div>
+                        <div class="asset-item">
+                            <div class="asset-icon">
+                                <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" alt="USDC">
+                            </div>
+                            <div class="asset-info">
+                                <h4>USD Coin</h4>
+                                <p>USDC</p>
+                            </div>
+                            <div class="asset-value">
+                                <h4>0.00 USDC</h4>
+                                <p>$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Section -->
+                <div class="transactions-section">
+                    <div class="section-header">
+                        <h3>Lịch sử giao dịch</h3>
+                        <button class="btn-text" onclick="viewAllTransactions()">
+                            Xem tất cả <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="transactions-list" id="transactions-list">
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>Chưa có giao dịch nào</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-item active" onclick="switchTab('wallet')">
+                    <i class="fas fa-wallet"></i>
+                    <span>Ví</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('activity')">
+                    <i class="fas fa-history"></i>
+                    <span>Hoạt động</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('browser')">
+                    <i class="fas fa-globe"></i>
+                    <span>Duyệt</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Send Modal -->
+        <div id="send-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-paper-plane"></i> Gửi tiền</h3>
+                    <button class="close-modal" onclick="closeModal('send-modal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Địa chỉ nhận</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="send-address" placeholder="0x...">
+                            <button class="btn-icon" onclick="pasteFromClipboard('send-address')">
+                                <i class="fas fa-paste"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="send-amount" placeholder="0.00" step="0.0001">
+                            <select id="send-token">
+                                <option value="ETH">ETH</option>
+                                <option value="USDT">USDT</option>
+                                <option value="USDC">USDC</option>
+                            </select>
+                        </div>
+                        <p class="input-hint">Số dư khả dụng: <span id="available-balance">0.00 ETH</span></p>
+                    </div>
+                    <div class="gas-info">
+                        <p>Phí gas ước tính: <span id="gas-estimate">~$0.00</span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('send-modal')">Hủy</button>
+                    <button class="btn btn-primary" onclick="sendTransaction()">
+                        <i class="fas fa-paper-plane"></i> Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receive Modal -->
+        <div id="receive-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-qrcode"></i> Nhận tiền</h3>
+                    <button class="close-modal" onclick="closeModal('receive-modal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body receive-body">
+                    <div class="qr-code" id="qr-code">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <p class="receive-address" id="receive-address">Chưa kết nối ví</p>
+                    <div class="receive-actions">
+                        <button class="btn btn-secondary" onclick="copyReceiveAddress()">
+                            <i class="fas fa-copy"></i> Sao chép địa chỉ
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareAddress()">
+                            <i class="fas fa-share-alt"></i> Chia sẻ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toast-message">Thành công!</span>
+        </div>
+    </div>
+
+    <script src="js/web3.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
