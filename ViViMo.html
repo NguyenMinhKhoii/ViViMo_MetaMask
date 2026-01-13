@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ví Vĩ Mô - Thanh Toán Vi Mô</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">
+        <img src="vivimo.png" alt="Logo" />
+        <h1>Ví Vĩ Mô</h1>
+      </div>
+      <div class="header-right">
+        <div
+          class="network-selector"
+          id="networkSelector"
+          onclick="switchNetwork()"
+        >
+          <div class="network-dot"></div>
+          <span id="networkName">Chưa kết nối</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <button
+          class="connect-header-btn"
+          id="headerConnectBtn"
+          onclick="connectWallet()"
+        >
+          <i class="fas fa-wallet"></i>
+          <span id="headerBtnText">Kết nối ví</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-container">
+      <div class="card wallet-info">
+        <div class="card-body">
+          <div class="wallet-not-connected" id="walletNotConnected">
+            <i class="fas fa-wallet"></i>
+            <h3>Chào mừng đến với Ví Vĩ Mô</h3>
+            <p>
+              Kết nối ví MetaMask để bắt đầu thanh toán vi mô an toàn và nhanh
+              chóng
+            </p>
+            <button class="connect-wallet-btn" onclick="connectWallet()">
+              <i class="fab fa-ethereum"></i>
+              Kết nối MetaMask
+            </button>
+          </div>
+
+          <div class="wallet-connected" id="walletConnected">
+            <div class="balance-display">
+              <div class="balance-label">Số dư khả dụng</div>
+              <div class="balance-amount">
+                <span id="ethBalance">0.0000</span> ETH
+              </div>
+              <div class="balance-usd">
+                ≈ $<span id="usdBalance">0.00</span> USD
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-action-btn" onclick="showTab('send')">
+                <i class="fas fa-paper-plane"></i><span>Gửi</span>
+              </button>
+              <button class="quick-action-btn" onclick="showTab('receive')">
+                <i class="fas fa-qrcode"></i><span>Nhận</span>
+              </button>
+              <button class="quick-action-btn" onclick="refreshBalance()">
+                <i class="fas fa-sync-alt"></i><span>Làm mới</span>
+              </button>
+              <button class="quick-action-btn" onclick="switchNetwork()">
+                <i class="fas fa-network-wired"></i><span>Đổi mạng</span>
+              </button>
+            </div>
+            <div class="wallet-details">
+              <div class="detail-item">
+                <label>Địa chỉ ví</label>
+                <div class="value">
+                  <span id="walletAddress">0x...</span>
+                  <button class="copy-btn" onclick="copyAddress()">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="detail-item">
+                <label>Mạng hiện tại</label>
+                <div class="value"><span id="currentNetwork">--</span></div>
+              </div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value" id="totalTx">0</div>
+                <div class="stat-label">Tổng giao dịch</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="totalSent">0</div>
+                <div class="stat-label">Đã gửi</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="totalReceived">0</div>
+                <div class="stat-label">Đã nhận</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-exchange-alt"></i>
+          <h2>Thanh toán</h2>
+        </div>
+        <div class="card-body">
+          <div class="payment-tabs">
+            <button
+              class="tab-btn active"
+              onclick="showTab('send')"
+              id="tabSend"
+            >
+              <i class="fas fa-paper-plane"></i> Gửi ETH
+            </button>
+            <button
+              class="tab-btn"
+              onclick="showTab('receive')"
+              id="tabReceive"
+            >
+              <i class="fas fa-qrcode"></i> Nhận ETH
+            </button>
+          </div>
+          <div class="payment-form active" id="sendForm">
+            <div class="form-group">
+              <label><i class="fas fa-user"></i> Địa chỉ người nhận</label>
+              <input type="text" id="recipientAddress" placeholder="0x..." />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-coins"></i> Số lượng (ETH)</label>
+              <input
+                type="number"
+                id="sendAmount"
+                placeholder="0.00"
+                step="0.0001"
+                min="0"
+              />
+              <div class="quick-amounts">
+                <button class="quick-amount-btn" onclick="setAmount(0.001)">
+                  0.001
+                </button>
+                <button class="quick-amount-btn" onclick="setAmount(0.005)">
+                  0.005
+                </button>
+                <button class="quick-amount-btn" onclick="setAmount(0.01)">
+                  0.01
+                </button>
+                <button class="quick-amount-btn" onclick="setAmount(0.05)">
+                  0.05
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label
+                ><i class="fas fa-sticky-note"></i> Ghi chú (tuỳ chọn)</label
+              >
+              <input type="text" id="txNote" placeholder="Mô tả giao dịch..." />
+            </div>
+            <button
+              class="submit-btn"
+              onclick="prepareTransaction()"
+              id="sendBtn"
+            >
+              <i class="fas fa-paper-plane"></i> Xác nhận gửi
+            </button>
+          </div>
+          <div class="payment-form" id="receiveForm">
+            <div class="qr-container">
+              <div class="qr-code" id="qrCode">
+                <i
+                  class="fas fa-qrcode"
+                  style="font-size: 100px; color: #333"
+                ></i>
+              </div>
+              <div class="qr-address" id="qrAddress">
+                Kết nối ví để hiển thị địa chỉ
+              </div>
+              <button class="submit-btn" onclick="copyAddress()">
+                <i class="fas fa-copy"></i> Sao chép địa chỉ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-history"></i>
+          <h2>Lịch sử giao dịch</h2>
+        </div>
+        <div class="card-body">
+          <div class="transaction-filters">
+            <button class="filter-btn active" onclick="filterTx('all')">
+              Tất cả
+            </button>
+            <button class="filter-btn" onclick="filterTx('send')">
+              Đã gửi
+            </button>
+            <button class="filter-btn" onclick="filterTx('receive')">
+              Đã nhận
+            </button>
+          </div>
+          <div class="transaction-list" id="transactionList">
+            <div class="no-transactions">
+              <i class="fas fa-inbox"></i>
+              <p>Chưa có giao dịch nào</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal" id="confirmModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-shield-alt"></i> Xác nhận giao dịch</h3>
+          <button class="modal-close" onclick="closeModal('confirmModal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="confirm-details">
+            <div class="confirm-row">
+              <label>Người nhận</label>
+              <div class="value" id="confirmTo">0x...</div>
+            </div>
+            <div class="confirm-row">
+              <label>Mạng</label>
+              <div class="value" id="confirmNetwork">--</div>
+            </div>
+            <div class="confirm-row">
+              <label>Phí gas (ước tính)</label>
+              <div class="value" id="confirmGas">~0.0001 ETH</div>
+            </div>
+          </div>
+          <div class="confirm-total">
+            <label>Tổng số tiền gửi</label>
+            <div class="amount" id="confirmAmount">0.00 ETH</div>
+          </div>
+          <div class="confirm-buttons">
+            <button class="btn-cancel" onclick="closeModal('confirmModal')">
+              <i class="fas fa-times"></i> Huỷ bỏ
+            </button>
+            <button class="btn-confirm" onclick="executeTransaction()">
+              <i class="fas fa-check"></i> Xác nhận
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i>
+      <div class="toast-message">
+        <strong id="toastTitle">Thông báo</strong>
+        <span id="toastMessage">Nội dung thông báo</span>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script>
+      let provider = null;
+      let signer = null;
+      let userAddress = null;
+      let isConnected = false;
+      let pendingTx = null;
+      let transactions = [];
+      let currentFilter = "all";
+      const ETH_PRICE_USD = 2500;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Ứng dụng đang khởi tạo...");
+        loadTransactionsFromStorage();
+
+        setTimeout(() => {
+          if (typeof window.ethereum !== "undefined") {
+            console.log("✅ MetaMask đã cài đặt");
+            window.ethereum.on("accountsChanged", handleAccountsChanged);
+            window.ethereum.on("chainChanged", () => window.location.reload());
+            checkExistingConnection();
+          } else {
+            console.warn("⚠️ MetaMask chưa cài đặt");
+            showToast(
+              "warning",
+              "Cần MetaMask",
+              "Vui lòng cài đặt MetaMask để sử dụng"
+            );
+          }
+        }, 500);
+      });
+
+      async function connectWallet() {
+        console.log("🔵 Bắt đầu kết nối ví...");
+
+        if (typeof window.ethereum === "undefined") {
+          showToast("error", "Lỗi", "MetaMask chưa được cài đặt!");
+          window.open("https://metamask.io/download/", "_blank");
+          return;
+        }
+
+        try {
+          updateConnectButton(true, "Đang kết nối...");
+
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          console.log("✅ Accounts:", accounts);
+
+          if (!accounts || accounts.length === 0) {
+            throw new Error("Không có tài khoản nào được chọn");
+          }
+
+          provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+          signer = provider.getSigner();
+          userAddress = accounts[0];
+          isConnected = true;
+
+          await updateWalletUI();
+          showToast("success", "Thành công", "Đã kết nối ví MetaMask!");
+        } catch (error) {
+          console.error("❌ Lỗi:", error);
+          let msg = error.message;
+          if (error.code === 4001) msg = "Bạn đã từ chối kết nối";
+          if (error.code === -32002) msg = "Vui lòng mở MetaMask và chấp nhận";
+          showToast("error", "Lỗi kết nối", msg);
+        } finally {
+          updateConnectButton(false);
+        }
+      }
+
+      async function checkExistingConnection() {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+          });
+          if (accounts.length > 0) {
+            provider = new ethers.providers.Web3Provider(
+              window.ethereum,
+              "any"
+            );
+            signer = provider.getSigner();
+            userAddress = accounts[0];
+            isConnected = true;
+            await updateWalletUI();
+          }
+        } catch (error) {
+          console.error("Lỗi kiểm tra kết nối:", error);
+        }
+      }
+
+      function handleAccountsChanged(accounts) {
+        if (accounts.length === 0) {
+          disconnectWallet();
+        } else {
+          userAddress = accounts[0];
+          updateWalletUI();
+        }
+      }
+
+      function disconnectWallet() {
+        isConnected = false;
+        userAddress = null;
+        provider = null;
+        signer = null;
+        document.getElementById("walletNotConnected").style.display = "block";
+        document.getElementById("walletConnected").classList.remove("show");
+        document.getElementById("headerBtnText").textContent = "Kết nối ví";
+        document.getElementById("networkName").textContent = "Chưa kết nối";
+      }
+
+      async function updateWalletUI() {
+        if (!isConnected || !userAddress) return;
+
+        document.getElementById("walletNotConnected").style.display = "none";
+        document.getElementById("walletConnected").classList.add("show");
+
+        const shortAddress = `${userAddress.slice(0, 6)}...${userAddress.slice(
+          -4
+        )}`;
+        document.getElementById("walletAddress").textContent = shortAddress;
+        document.getElementById("qrAddress").textContent = userAddress;
+        document.getElementById("headerBtnText").textContent = shortAddress;
+
+        const network = await provider.getNetwork();
+        const networkName = getNetworkName(network.chainId);
+        document.getElementById("networkName").textContent = networkName;
+        document.getElementById("currentNetwork").textContent = networkName;
+
+        await refreshBalance();
+        renderTransactions();
+        updateStats();
+        generateQRCode();
+      }
+
+      async function refreshBalance() {
+        if (!provider || !userAddress) return;
+        try {
+          const balance = await provider.getBalance(userAddress);
+          const ethBalance = parseFloat(
+            ethers.utils.formatEther(balance)
+          ).toFixed(4);
+          const usdBalance = (parseFloat(ethBalance) * ETH_PRICE_USD).toFixed(
+            2
+          );
+          document.getElementById("ethBalance").textContent = ethBalance;
+          document.getElementById("usdBalance").textContent = usdBalance;
+        } catch (error) {
+          console.error("Lỗi lấy số dư:", error);
+        }
+      }
+
+      function getNetworkName(chainId) {
+        const networks = {
+          1: "Ethereum Mainnet",
+          5: "Goerli",
+          11155111: "Sepolia",
+          137: "Polygon",
+          56: "BSC",
+        };
+        return networks[chainId] || `Chain ${chainId}`;
+      }
+
+      function updateConnectButton(loading, text) {
+        const btn = document.getElementById("headerConnectBtn");
+        const btnText = document.getElementById("headerBtnText");
+        if (loading) {
+          btn.disabled = true;
+          btnText.innerHTML = `<span class="loading-spinner"></span> ${text}`;
+        } else {
+          btn.disabled = false;
+          btnText.textContent =
+            isConnected && userAddress
+              ? `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`
+              : "Kết nối ví";
+        }
+      }
+
+      function showTab(tab) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".payment-form")
+          .forEach((f) => f.classList.remove("active"));
+        document
+          .getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`)
+          .classList.add("active");
+        document.getElementById(`${tab}Form`).classList.add("active");
+      }
+
+      function setAmount(amount) {
+        document.getElementById("sendAmount").value = amount;
+      }
+
+      function prepareTransaction() {
+        if (!isConnected) {
+          showToast("warning", "Chưa kết nối", "Vui lòng kết nối ví trước");
+          return;
+        }
+        const recipient = document
+          .getElementById("recipientAddress")
+          .value.trim();
+        const amount = document.getElementById("sendAmount").value;
+        if (!recipient || !ethers.utils.isAddress(recipient)) {
+          showToast("error", "Lỗi", "Địa chỉ không hợp lệ");
+          return;
+        }
+        if (!amount || parseFloat(amount) <= 0) {
+          showToast("error", "Lỗi", "Số tiền không hợp lệ");
+          return;
+        }
+
+        pendingTx = {
+          to: recipient,
+          amount,
+          note: document.getElementById("txNote").value,
+        };
+        document.getElementById("confirmTo").textContent = `${recipient.slice(
+          0,
+          10
+        )}...${recipient.slice(-8)}`;
+        document.getElementById("confirmAmount").textContent = `${amount} ETH`;
+        document.getElementById("confirmNetwork").textContent =
+          document.getElementById("currentNetwork").textContent;
+        openModal("confirmModal");
+      }
+
+      async function executeTransaction() {
+        if (!pendingTx || !signer) return;
+        try {
+          closeModal("confirmModal");
+          showToast(
+            "info",
+            "Đang xử lý",
+            "Vui lòng xác nhận trong MetaMask..."
+          );
+
+          const tx = await signer.sendTransaction({
+            to: pendingTx.to,
+            value: ethers.utils.parseEther(pendingTx.amount),
+          });
+
+          const txRecord = {
+            hash: tx.hash,
+            from: userAddress,
+            to: pendingTx.to,
+            amount: pendingTx.amount,
+            note: pendingTx.note,
+            type: "send",
+            status: "pending",
+            timestamp: new Date().toISOString(),
+          };
+          transactions.unshift(txRecord);
+          saveTransactionsToStorage();
+          renderTransactions();
+
+          await tx.wait();
+          txRecord.status = "confirmed";
+          saveTransactionsToStorage();
+          renderTransactions();
+
+          document.getElementById("recipientAddress").value = "";
+          document.getElementById("sendAmount").value = "";
+          document.getElementById("txNote").value = "";
+          pendingTx = null;
+          await refreshBalance();
+          showToast("success", "Thành công", "Giao dịch đã được xác nhận!");
+        } catch (error) {
+          console.error("Lỗi giao dịch:", error);
+          showToast("error", "Thất bại", error.message || "Giao dịch thất bại");
+        }
+      }
+
+      function saveTransactionsToStorage() {
+        localStorage.setItem(
+          "vivimoTransactions",
+          JSON.stringify(transactions)
+        );
+      }
+      function loadTransactionsFromStorage() {
+        const s = localStorage.getItem("vivimoTransactions");
+        if (s) transactions = JSON.parse(s);
+      }
+
+      function filterTx(filter) {
+        currentFilter = filter;
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        event.target.classList.add("active");
+        renderTransactions();
+      }
+
+      function renderTransactions() {
+        const list = document.getElementById("transactionList");
+        let filtered =
+          currentFilter === "all"
+            ? transactions
+            : transactions.filter((t) => t.type === currentFilter);
+        if (filtered.length === 0) {
+          list.innerHTML =
+            '<div class="no-transactions"><i class="fas fa-inbox"></i><p>Chưa có giao dịch nào</p></div>';
+          return;
+        }
+        list.innerHTML = filtered
+          .map(
+            (tx) => `
+                <div class="transaction-item">
+                    <div class="tx-icon ${tx.type}"><i class="fas fa-${
+              tx.type === "send" ? "arrow-up" : "arrow-down"
+            }"></i></div>
+                    <div class="tx-details">
+                        <div class="tx-type">${
+                          tx.type === "send" ? "Gửi đi" : "Nhận về"
+                        }</div>
+                        <div class="tx-address">${
+                          tx.type === "send" ? tx.to : tx.from
+                        }</div>
+                    </div>
+                    <div class="tx-info">
+                        <div class="tx-amount ${tx.type}">${
+              tx.type === "send" ? "-" : "+"
+            }${tx.amount} ETH</div>
+                        <div class="tx-time">${formatTime(tx.timestamp)}</div>
+                        <div class="tx-status ${tx.status}">${
+              tx.status === "confirmed" ? "Đã xác nhận" : "Đang xử lý"
+            }</div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function formatTime(ts) {
+        const d = new Date(ts);
+        return (
+          d.toLocaleDateString("vi-VN") +
+          " " +
+          d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+        );
+      }
+
+      function updateStats() {
+        const userTx = transactions.filter(
+          (t) =>
+            t.from?.toLowerCase() === userAddress?.toLowerCase() ||
+            t.to?.toLowerCase() === userAddress?.toLowerCase()
+        );
+        document.getElementById("totalTx").textContent = userTx.length;
+        document.getElementById("totalSent").textContent = userTx.filter(
+          (t) => t.type === "send"
+        ).length;
+        document.getElementById("totalReceived").textContent = userTx.filter(
+          (t) => t.type === "receive"
+        ).length;
+      }
+
+      function copyAddress() {
+        if (userAddress) {
+          navigator.clipboard.writeText(userAddress);
+          showToast("success", "Đã sao chép", "Địa chỉ ví đã được sao chép");
+        }
+      }
+
+      function generateQRCode() {
+        if (!userAddress) return;
+        document.getElementById(
+          "qrCode"
+        ).innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${userAddress}" alt="QR">`;
+      }
+
+      async function switchNetwork() {
+        if (!window.ethereum) return;
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xaa36a7" }],
+          });
+        } catch (error) {
+          if (error.code === 4902) {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0xaa36a7",
+                  chainName: "Sepolia Testnet",
+                  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+                  rpcUrls: ["https://rpc.sepolia.org"],
+                  blockExplorerUrls: ["https://sepolia.etherscan.io"],
+                },
+              ],
+            });
+          }
+        }
+      }
+
+      function openModal(id) {
+        document.getElementById(id).classList.add("show");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("show");
+      }
+      window.onclick = function (e) {
+        if (e.target.classList.contains("modal"))
+          e.target.classList.remove("show");
+      };
+
+      function showToast(type, title, message) {
+        const toast = document.getElementById("toast");
+        const icons = {
+          success: "fa-check-circle",
+          error: "fa-times-circle",
+          warning: "fa-exclamation-triangle",
+          info: "fa-info-circle",
+        };
+        toast.querySelector("i").className = `fas ${icons[type]}`;
+        toast.className = `toast ${type}`;
+        document.getElementById("toastTitle").textContent = title;
+        document.getElementById("toastMessage").textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 4000);
+      }
+    </script>
+  </body>
+</html>
