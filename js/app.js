@@ -8,7 +8,21 @@ let isConnected = false;
 let pendingTx = null;
 let transactions = [];
 let currentFilter = "all";
+let currentCategoryFilter = "all";
 const ETH_PRICE_USD = 2500;
+
+// Danh mục giao dịch
+const categoryNames = {
+  coffee: { name: "Cà phê", icon: "☕" },
+  food: { name: "Đồ ăn", icon: "🍜" },
+  entertainment: { name: "Giải trí", icon: "🎮" },
+  shopping: { name: "Mua sắm", icon: "🛒" },
+  transport: { name: "Di chuyển", icon: "🚗" },
+  bill: { name: "Hoá đơn", icon: "📄" },
+  tip: { name: "Tip/Donate", icon: "💝" },
+  transfer: { name: "Chuyển tiền", icon: "💸" },
+  other: { name: "Khác", icon: "🔹" },
+};
 
 // ====================
 // Initialization
@@ -92,7 +106,7 @@ async function connectWallet() {
       false,
       isConnected
         ? `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`
-        : "Kết nối ví"
+        : "Kết nối ví",
     );
   }
 }
@@ -143,6 +157,24 @@ function disconnectWallet() {
   document.getElementById("walletConnected").classList.remove("show");
   document.getElementById("headerBtnText").textContent = "Kết nối ví";
   document.getElementById("networkName").textContent = "Chưa kết nối";
+
+  // Cập nhật icon và style nút
+  const headerBtn = document.getElementById("headerConnectBtn");
+  headerBtn.classList.remove("connected");
+
+  showToast("info", "Ngắt kết nối", "Đã ngắt kết nối ví thành công.");
+}
+
+// Toggle kết nối/ngắt kết nối ví
+function toggleWalletConnection() {
+  if (isConnected) {
+    // Hiển thị menu dropdown hoặc trực tiếp ngắt kết nối
+    if (confirm("🔗 Bạn có muốn ngắt kết nối ví không?")) {
+      disconnectWallet();
+    }
+  } else {
+    connectWallet();
+  }
 }
 
 // ====================
@@ -163,6 +195,10 @@ async function updateWalletUI() {
   document.getElementById("qrAddress").textContent = userAddress;
   document.getElementById("headerBtnText").textContent = shortAddress;
 
+  // Thêm class connected cho nút header
+  const headerBtn = document.getElementById("headerConnectBtn");
+  headerBtn.classList.add("connected");
+
   // Cập nhật thông tin mạng
   try {
     const network = await provider.getNetwork();
@@ -174,7 +210,7 @@ async function updateWalletUI() {
       networkName,
       "(chainId:",
       network.chainId,
-      ")"
+      ")",
     );
   } catch (error) {
     console.error("❌ Lỗi lấy thông tin mạng:", error);
@@ -270,6 +306,7 @@ function prepareTransaction() {
   const recipient = document.getElementById("recipientAddress").value.trim();
   const amount = document.getElementById("sendAmount").value;
   const note = document.getElementById("txNote").value.trim();
+  const category = document.getElementById("txCategory").value;
 
   // Validate địa chỉ
   if (!recipient || !ethers.utils.isAddress(recipient)) {
@@ -284,16 +321,19 @@ function prepareTransaction() {
   }
 
   // Lưu thông tin giao dịch pending
-  pendingTx = { recipient, amount, note };
+  pendingTx = { recipient, amount, note, category };
 
   // Hiển thị modal xác nhận
+  const categoryInfo = categoryNames[category] || categoryNames.other;
   document.getElementById("confirmTo").textContent = `${recipient.slice(
     0,
-    10
+    10,
   )}...${recipient.slice(-8)}`;
   document.getElementById("confirmAmount").textContent = `${amount} ETH`;
   document.getElementById("confirmNetwork").textContent =
     document.getElementById("currentNetwork").textContent;
+  document.getElementById("confirmCategory").textContent =
+    `${categoryInfo.icon} ${categoryInfo.name}`;
   document.getElementById("confirmGas").textContent = "~0.0001 ETH";
 
   openModal("confirmModal");
@@ -325,6 +365,7 @@ async function executeTransaction() {
       to: pendingTx.recipient,
       amount: pendingTx.amount,
       note: pendingTx.note || "",
+      category: pendingTx.category || "other",
       type: "send",
       status: "pending",
       timestamp: Date.now(),
@@ -357,6 +398,7 @@ async function executeTransaction() {
     document.getElementById("recipientAddress").value = "";
     document.getElementById("sendAmount").value = "";
     document.getElementById("txNote").value = "";
+    document.getElementById("txCategory").value = "other";
     pendingTx = null;
 
     // Cập nhật số dư
@@ -407,7 +449,7 @@ function loadTransactionsFromStorage() {
       console.log(
         "✅ Đã tải",
         transactions.length,
-        "giao dịch từ localStorage"
+        "giao dịch từ localStorage",
       );
     }
   } catch (error) {
@@ -431,13 +473,25 @@ function filterTx(filter) {
   renderTransactions();
 }
 
+function filterByCategory(category) {
+  currentCategoryFilter = category;
+  renderTransactions();
+}
+
 function renderTransactions() {
   const container = document.getElementById("transactionList");
 
-  // Lọc giao dịch
+  // Lọc giao dịch theo loại
   let filteredTx = transactions;
   if (currentFilter !== "all") {
-    filteredTx = transactions.filter((tx) => tx.type === currentFilter);
+    filteredTx = filteredTx.filter((tx) => tx.type === currentFilter);
+  }
+
+  // Lọc theo danh mục
+  if (currentCategoryFilter !== "all") {
+    filteredTx = filteredTx.filter(
+      (tx) => tx.category === currentCategoryFilter,
+    );
   }
 
   // Hiển thị trống nếu không có giao dịch
@@ -462,6 +516,10 @@ function renderTransactions() {
         ? `${address.slice(0, 6)}...${address.slice(-4)}`
         : "N/A";
       const amountPrefix = isSend ? "-" : "+";
+
+      // Lấy thông tin danh mục
+      const categoryInfo = categoryNames[tx.category] || categoryNames.other;
+      const categoryDisplay = `${categoryInfo.icon} ${categoryInfo.name}`;
 
       let statusClass = tx.status;
       let statusText = "";
@@ -489,11 +547,12 @@ function renderTransactions() {
                 <div class="tx-details">
                     <div class="tx-type">${typeText}</div>
                     <div class="tx-address">${shortAddress}</div>
+                    <div class="tx-category">${categoryDisplay}</div>
                 </div>
                 <div class="tx-amount">
                     <div class="tx-value ${tx.type}">${amountPrefix}${
-        tx.amount
-      } ETH</div>
+                      tx.amount
+                    } ETH</div>
                     <div class="tx-time">${formatTime(tx.timestamp)}</div>
                     <span class="tx-status ${statusClass}">${statusText}</span>
                 </div>
@@ -604,7 +663,7 @@ async function switchNetwork() {
         showToast(
           "success",
           "Thành công",
-          "Đã thêm và chuyển sang mạng Sepolia."
+          "Đã thêm và chuyển sang mạng Sepolia.",
         );
       } catch (addError) {
         console.error("❌ Lỗi thêm mạng:", addError);

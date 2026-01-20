@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -29,9 +29,9 @@
         <button
           class="connect-header-btn"
           id="headerConnectBtn"
-          onclick="connectWallet()"
+          onclick="toggleWalletConnection()"
         >
-          <i class="fas fa-wallet"></i>
+          <i class="fas fa-wallet" id="walletIcon"></i>
           <span id="headerBtnText">Kết nối ví</span>
         </button>
       </div>
@@ -106,6 +106,9 @@
                 <div class="stat-label">Đã nhận</div>
               </div>
             </div>
+            <button class="disconnect-btn" onclick="disconnectWallet()">
+              <i class="fas fa-sign-out-alt"></i> Ngắt kết nối ví
+            </button>
           </div>
         </div>
       </div>
@@ -162,6 +165,20 @@
               </div>
             </div>
             <div class="form-group">
+              <label><i class="fas fa-tags"></i> Danh mục</label>
+              <select id="txCategory" class="category-select">
+                <option value="other">🔹 Khác</option>
+                <option value="coffee">☕ Cà phê</option>
+                <option value="food">🍜 Đồ ăn</option>
+                <option value="entertainment">🎮 Giải trí</option>
+                <option value="shopping">🛒 Mua sắm</option>
+                <option value="transport">🚗 Di chuyển</option>
+                <option value="bill">📄 Hoá đơn</option>
+                <option value="tip">💝 Tip/Donate</option>
+                <option value="transfer">💸 Chuyển tiền</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label
                 ><i class="fas fa-sticky-note"></i> Ghi chú (tuỳ chọn)</label
               >
@@ -211,6 +228,20 @@
               Đã nhận
             </button>
           </div>
+          <div class="category-filters">
+            <select id="categoryFilter" onchange="filterByCategory(this.value)">
+              <option value="all">📋 Tất cả danh mục</option>
+              <option value="coffee">☕ Cà phê</option>
+              <option value="food">🍜 Đồ ăn</option>
+              <option value="entertainment">🎮 Giải trí</option>
+              <option value="shopping">🛒 Mua sắm</option>
+              <option value="transport">🚗 Di chuyển</option>
+              <option value="bill">📄 Hoá đơn</option>
+              <option value="tip">💝 Tip/Donate</option>
+              <option value="transfer">💸 Chuyển tiền</option>
+              <option value="other">🔹 Khác</option>
+            </select>
+          </div>
           <div class="transaction-list" id="transactionList">
             <div class="no-transactions">
               <i class="fas fa-inbox"></i>
@@ -234,6 +265,10 @@
             <div class="confirm-row">
               <label>Người nhận</label>
               <div class="value" id="confirmTo">0x...</div>
+            </div>
+            <div class="confirm-row">
+              <label>Danh mục</label>
+              <div class="value" id="confirmCategory">🔹 Khác</div>
             </div>
             <div class="confirm-row">
               <label>Mạng</label>

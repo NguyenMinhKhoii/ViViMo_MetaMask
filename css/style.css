@@ -59,7 +59,8 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       ellipse at 20% 20%,
       rgba(99, 102, 241, 0.08) 0%,
       transparent 50%
@@ -175,6 +176,14 @@ body::before {
 .connect-header-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+.connect-header-btn.connected {
+  background: var(--gradient-success);
+}
+
+.connect-header-btn.connected:hover {
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
 }
 
 /* ==================== */
@@ -401,6 +410,7 @@ body::before {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  margin-bottom: 20px;
 }
 
 .stat-item {
@@ -420,6 +430,34 @@ body::before {
 .stat-label {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* Disconnect Button */
+.disconnect-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ff6b6b;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+}
+
+.disconnect-btn i {
+  font-size: 16px;
 }
 
 /* ==================== */
@@ -555,7 +593,9 @@ body::before {
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg), 0 0 30px rgba(99, 102, 241, 0.3);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 30px rgba(99, 102, 241, 0.3);
 }
 
 .submit-btn:disabled {
@@ -602,12 +642,47 @@ body::before {
 }
 
 /* ==================== */
+/* Category Select      */
+/* ==================== */
+.category-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0b0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.category-select:hover {
+  border-color: var(--primary-color);
+}
+
+.category-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.category-select option {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  padding: 10px;
+}
+
+/* ==================== */
 /* Transaction Filters  */
 /* ==================== */
 .transaction-filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .filter-btn {
@@ -630,6 +705,41 @@ body::before {
   background: var(--primary-light);
   border-color: var(--primary-color);
   color: var(--primary-color);
+}
+
+/* Category Filters */
+.category-filters {
+  margin-bottom: 20px;
+}
+
+.category-filters select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0b0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.category-filters select:hover {
+  border-color: var(--primary-color);
+}
+
+.category-filters select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.category-filters select option {
+  background: var(--card-bg);
+  color: var(--text-primary);
 }
 
 /* Transaction List */
@@ -709,6 +819,16 @@ body::before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.tx-category {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  display: inline-block;
 }
 
 .tx-amount {
