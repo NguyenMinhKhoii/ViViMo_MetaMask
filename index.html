@@ -87,9 +87,12 @@
                   </button>
                 </div>
               </div>
-              <div class="detail-item">
+              <div class="detail-item network-clickable" onclick="switchNetwork()">
                 <label>Mạng hiện tại</label>
-                <div class="value"><span id="currentNetwork">--</span></div>
+                <div class="value">
+                  <span id="currentNetwork">--</span>
+                  <i class="fas fa-exchange-alt switch-icon"></i>
+                </div>
               </div>
             </div>
             <div class="stats-grid">
@@ -300,6 +303,62 @@
       <div class="toast-message">
         <strong id="toastTitle">Thông báo</strong>
         <span id="toastMessage">Nội dung thông báo</span>
+      </div>
+    </div>
+
+    <!-- Network Selection Modal -->
+    <div class="modal" id="networkModal">
+      <div class="modal-content network-modal">
+        <div class="modal-header">
+          <h3><i class="fas fa-network-wired"></i> Chọn mạng</h3>
+          <button class="modal-close" onclick="closeModal('networkModal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="network-list">
+            <div class="network-item" onclick="selectNetwork('0x1')">
+              <div class="network-icon eth">
+                <i class="fab fa-ethereum"></i>
+              </div>
+              <div class="network-info">
+                <div class="network-title">Ethereum Mainnet</div>
+                <div class="network-desc">Mạng chính Ethereum</div>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="network-item" onclick="selectNetwork('0xaa36a7')">
+              <div class="network-icon sepolia">
+                <i class="fab fa-ethereum"></i>
+              </div>
+              <div class="network-info">
+                <div class="network-title">Sepolia Testnet</div>
+                <div class="network-desc">Mạng thử nghiệm (Khuyên dùng)</div>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="network-item" onclick="selectNetwork('0x89')">
+              <div class="network-icon polygon">
+                <i class="fas fa-gem"></i>
+              </div>
+              <div class="network-info">
+                <div class="network-title">Polygon Mainnet</div>
+                <div class="network-desc">Phí thấp, tốc độ nhanh</div>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="network-item" onclick="selectNetwork('0x38')">
+              <div class="network-icon bsc">
+                <i class="fas fa-coins"></i>
+              </div>
+              <div class="network-info">
+                <div class="network-title">BNB Smart Chain</div>
+                <div class="network-desc">Binance Smart Chain</div>
+              </div>
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

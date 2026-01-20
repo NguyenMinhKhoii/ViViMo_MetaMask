@@ -630,48 +630,85 @@ async function switchNetwork() {
     return;
   }
 
-  const sepoliaChainId = "0xaa36a7"; // 11155111 in hex
+  // Mở modal chọn mạng
+  openModal("networkModal");
+}
+
+// Danh sách thông tin các mạng
+const networkConfigs = {
+  "0x1": {
+    chainId: "0x1",
+    chainName: "Ethereum Mainnet",
+    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+    rpcUrls: ["https://mainnet.infura.io/v3/"],
+    blockExplorerUrls: ["https://etherscan.io/"],
+  },
+  "0xaa36a7": {
+    chainId: "0xaa36a7",
+    chainName: "Sepolia Testnet",
+    nativeCurrency: { name: "SepoliaETH", symbol: "ETH", decimals: 18 },
+    rpcUrls: ["https://sepolia.infura.io/v3/"],
+    blockExplorerUrls: ["https://sepolia.etherscan.io/"],
+  },
+  "0x89": {
+    chainId: "0x89",
+    chainName: "Polygon Mainnet",
+    nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+    rpcUrls: ["https://polygon-rpc.com/"],
+    blockExplorerUrls: ["https://polygonscan.com/"],
+  },
+  "0x38": {
+    chainId: "0x38",
+    chainName: "BNB Smart Chain",
+    nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+    rpcUrls: ["https://bsc-dataseed.binance.org/"],
+    blockExplorerUrls: ["https://bscscan.com/"],
+  },
+};
+
+async function selectNetwork(chainId) {
+  closeModal("networkModal");
+
+  if (typeof window.ethereum === "undefined") {
+    showToast("error", "Lỗi", "MetaMask chưa được cài đặt.");
+    return;
+  }
+
+  const networkConfig = networkConfigs[chainId];
+  if (!networkConfig) {
+    showToast("error", "Lỗi", "Mạng không được hỗ trợ.");
+    return;
+  }
 
   try {
-    console.log("🔵 Đang chuyển sang Sepolia...");
+    console.log("🔵 Đang chuyển sang", networkConfig.chainName + "...");
+    showToast("info", "Đang xử lý", "Vui lòng xác nhận trong MetaMask...");
+
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: sepoliaChainId }],
+      params: [{ chainId: chainId }],
     });
-    showToast("success", "Thành công", "Đã chuyển sang mạng Sepolia.");
+
+    showToast("success", "Thành công", `Đã chuyển sang ${networkConfig.chainName}`);
   } catch (error) {
     // Nếu mạng chưa được thêm (error code 4902)
     if (error.code === 4902) {
       try {
-        console.log("🔵 Đang thêm mạng Sepolia...");
+        console.log("🔵 Đang thêm mạng", networkConfig.chainName + "...");
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: sepoliaChainId,
-              chainName: "Sepolia Testnet",
-              nativeCurrency: {
-                name: "SepoliaETH",
-                symbol: "ETH",
-                decimals: 18,
-              },
-              rpcUrls: ["https://sepolia.infura.io/v3/"],
-              blockExplorerUrls: ["https://sepolia.etherscan.io/"],
-            },
-          ],
+          params: [networkConfig],
         });
-        showToast(
-          "success",
-          "Thành công",
-          "Đã thêm và chuyển sang mạng Sepolia.",
-        );
+        showToast("success", "Thành công", `Đã thêm và chuyển sang ${networkConfig.chainName}`);
       } catch (addError) {
         console.error("❌ Lỗi thêm mạng:", addError);
-        showToast("error", "Lỗi", "Không thể thêm mạng Sepolia.");
+        showToast("error", "Lỗi", "Không thể thêm mạng. Vui lòng thử lại.");
       }
+    } else if (error.code === 4001) {
+      showToast("warning", "Đã huỷ", "Bạn đã huỷ chuyển mạng.");
     } else {
       console.error("❌ Lỗi chuyển mạng:", error);
-      showToast("error", "Lỗi", "Không thể chuyển mạng.");
+      showToast("error", "Lỗi", "Không thể chuyển mạng. Vui lòng thử lại.");
     }
   }
 }

@@ -405,6 +405,30 @@ body::before {
   color: white;
 }
 
+/* Network clickable */
+.network-clickable {
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border-radius: var(--radius-sm);
+  margin: 0 -8px;
+  padding: 10px 8px !important;
+}
+
+.network-clickable:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.switch-icon {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  transition: var(--transition-fast);
+}
+
+.network-clickable:hover .switch-icon {
+  color: white;
+  transform: rotate(180deg);
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
@@ -1071,6 +1095,95 @@ body::before {
 .btn-confirm:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* ==================== */
+/* Network Modal        */
+/* ==================== */
+.network-modal {
+  max-width: 380px;
+}
+
+.network-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.network-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.network-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.network-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.network-icon.eth {
+  background: linear-gradient(135deg, #627eea 0%, #3c4eb4 100%);
+  color: white;
+}
+
+.network-icon.sepolia {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+}
+
+.network-icon.polygon {
+  background: linear-gradient(135deg, #8247e5 0%, #6f3eba 100%);
+  color: white;
+}
+
+.network-icon.bsc {
+  background: linear-gradient(135deg, #f3ba2f 0%, #d4a017 100%);
+  color: white;
+}
+
+.network-info {
+  flex: 1;
+}
+
+.network-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.network-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.network-item > .fa-chevron-right {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: var(--transition-fast);
+}
+
+.network-item:hover > .fa-chevron-right {
+  color: var(--primary-color);
+  transform: translateX(4px);
 }
 
 /* ==================== */
